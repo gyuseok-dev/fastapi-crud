@@ -15,6 +15,7 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 ## local 실행
+cd app
 uvicorn main:app --reload
 
 ## api hit (curl)
