@@ -1,12 +1,13 @@
 from datetime import datetime
 from fastapi import FastAPI, HTTPException
 from pydantic import BaseModel
-from db.session import engine
 from typing import Optional 
 from pydantic import BaseModel
-from db.connection import get_db
-from db.models.entry import ItemModel
+from .db.session import engine
+from .db.connection import get_db
+from .db.models.item import ItemModel
 from sqlalchemy.exc import ProgrammingError
+
 # FastAPI 앱 설정
 app = FastAPI(title="Backend API", version="1.0.0") 
 
@@ -45,7 +46,6 @@ def migrate():
 
 @app.post("/create", description="생성", response_model=Item)
 def create_item(item: ItemCreate):
-    print("create_item")
     db = next(get_db())
     db_item = ItemModel(name=item.name, content=item.content)
     db.add(db_item)
