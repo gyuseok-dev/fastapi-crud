@@ -39,3 +39,6 @@ docker-compose -d --env-file .env up
 
 ## 삭제
 docker-compose down
+
+# swagger url
+http://localhost:8000/docs

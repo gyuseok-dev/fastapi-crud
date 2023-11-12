@@ -8,7 +8,7 @@ from db.connection import get_db
 from db.models.entry import ItemModel
 from sqlalchemy.exc import ProgrammingError
 # FastAPI 앱 설정
-app = FastAPI()
+app = FastAPI(title="Backend API", version="1.0.0") 
 
 # Pydantic 모델
 class Item(BaseModel):
@@ -29,7 +29,10 @@ class ItemUpdate(BaseModel):
     name: str
     content: str
 
-@app.post("/migrate")
+class MigrationResponse(BaseModel):
+    message: str
+
+@app.post("/migrate", description="DB 테이블 생성용 API", response_model=MigrationResponse)
 def migrate():
     try: 
         ItemModel.__table__.create(engine)
@@ -40,7 +43,7 @@ def migrate():
         
     return {"message": "success"}
 
-@app.post("/create", response_model=Item)
+@app.post("/create", description="생성", response_model=Item)
 def create_item(item: ItemCreate):
     print("create_item")
     db = next(get_db())
@@ -50,7 +53,7 @@ def create_item(item: ItemCreate):
     db.refresh(db_item)
     return db_item
 
-@app.get("/read/{item_id}", response_model=Item)
+@app.get("/read/{item_id}", description="조회", response_model=Item)
 def read_item(item_id: int):
     db = next(get_db())
     item = db.query(ItemModel).filter(ItemModel.id == item_id).first()
@@ -58,7 +61,7 @@ def read_item(item_id: int):
         raise HTTPException(status_code=404, detail="유효하지 않은 ID입니다.")
     return item
 
-@app.put("/update/{item_id}", response_model=Item)
+@app.put("/update/{item_id}", description='수정', response_model=Item)
 def update_item(item_id: int, item: ItemUpdate):
     db = next(get_db())
     db_item = db.query(ItemModel).filter(ItemModel.id == item_id).first()
@@ -70,7 +73,7 @@ def update_item(item_id: int, item: ItemUpdate):
     db.refresh(db_item)
     return db_item
 
-@app.delete("/delete/{item_id}", response_model=Item)
+@app.delete("/delete/{item_id}", description='삭제', response_model=Item)
 def delete_item(item_id: int):
     db = next(get_db())
     db_item = db.query(ItemModel).filter(ItemModel.id == item_id).first()
