@@ -42,3 +42,11 @@ docker-compose down
 
 # swagger url
 http://localhost:8000/docs
+
+# 테스트
+
+## dependency 설치
+pip install -r tests/requirements.txt
+
+## 테스트 실행
+pytest .
